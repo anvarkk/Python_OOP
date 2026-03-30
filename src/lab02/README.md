@@ -33,3 +33,5 @@
 ## Запуск
 1. Убедитесь, что файлы находятся в структуре:
 python_labs/src/lab02/model.py|collection.py|demo.py
+
+![alt text](image.png)
