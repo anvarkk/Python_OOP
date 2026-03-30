@@ -1,4 +1,5 @@
 from typing import List, Optional
+from model import Book
 
 class Library:
     def __init__(self):
