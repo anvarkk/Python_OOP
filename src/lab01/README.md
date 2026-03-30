@@ -38,3 +38,6 @@
 ## Запуск
 1. Убедитесь, что файлы находятся в структуре:
 python_labs/src/lab01/model.py|demo.py
+
+PRINT
+![alt text](image.png)
