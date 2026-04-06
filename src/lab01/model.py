@@ -1,63 +1,91 @@
+from validate import validate_title, validate_author, validate_year, validate_price
+
 class Book:
-    # Атрибут класса: общее количество созданных книг
     total_books = 0
 
-    def __init__(self, title: str, author: str, year: int, price: float):
-        # Проверки входных данных
-        if not isinstance(title, str) or not title.strip():
-            raise ValueError("Название книги должно быть непустой строкой.")
-        if not isinstance(author, str) or not author.strip():
-            raise ValueError("Имя автора должно быть непустой строкой.")
-        if not isinstance(year, int) or year < 1440 or year > 2025:
-            raise ValueError("Год издания должен быть целым числом от 1440 до 2025.")
-        if not isinstance(price, (int, float)) or price <= 0:
-            raise ValueError("Цена должна быть положительным числом.")
-
-        self._title = title.strip()
-        self._author = author.strip()
-        self._year = year
-        self._price = float(price)
-
-        # Увеличиваем счетчик книг
+    def __init__(self, title, author, year, price):
+        self._title = validate_title(title)
+        self._author = validate_author(author)
+        self._year = validate_year(year)
+        self._price = validate_price(price)
+        self._status = "available"  # available, checked_out, damaged
         Book.total_books += 1
 
-    # Геттеры и сеттеры (свойства)
     @property
-    def title(self) -> str:
+    def title(self):
         return self._title
 
     @property
-    def author(self) -> str:
+    def author(self):
         return self._author
 
     @property
-    def year(self) -> int:
+    def year(self):
         return self._year
 
     @year.setter
-    def year(self, value: int):
-        if not isinstance(value, int) or value < 1440 or value > 2025:
-            raise ValueError("Год издания должен быть целым числом от 1440 до 2025.")
-        self._year = value
+    def year(self, value):
+        self._year = validate_year(value)
 
     @property
-    def price(self) -> float:
+    def price(self):
         return self._price
 
     @price.setter
-    def price(self, value: float):
-        if not isinstance(value, (int, float)) or value <= 0:
-            raise ValueError("Цена должна быть положительным числом.")
-        self._price = float(value)
+    def price(self, value):
+        self._price = validate_price(value)
+
+    @property
+    def status(self):
+        return self._status
+
+    # Методы изменения состояния
+    def check_out(self):
+        if self._status == "available":
+            self._status = "checked_out"
+            print(f"✓ Книга '{self.title}' выдана.")
+        elif self._status == "checked_out":
+            print(f"⚠ Книга '{self.title}' уже выдана, нельзя выдать повторно.")
+        elif self._status == "damaged":
+            print(f"✗ Книга '{self.title}' повреждена, выдача невозможна.")
+        else:
+            print(f"❓ Неизвестный статус книги '{self.title}'.")
+
+    def return_book(self, damaged=False):
+        if self._status == "checked_out":
+            if damaged:
+                self._status = "damaged"
+                print(f"⚠ Книга '{self.title}' возвращена с повреждениями.")
+            else:
+                self._status = "available"
+                print(f"✓ Книга '{self.title}' возвращена в хорошем состоянии.")
+        elif self._status == "available":
+            print(f"⚠ Книга '{self.title}' не была выдана, возврат невозможен.")
+        elif self._status == "damaged":
+            print(f"⚠ Книга '{self.title}' уже повреждена, требуется ремонт.")
+        else:
+            print(f"❓ Неизвестный статус книги '{self.title}'.")
+
+    def repair(self):
+        if self._status == "damaged":
+            self._status = "available"
+            print(f"🔧 Книга '{self.title}' отремонтирована и снова доступна.")
+        else:
+            print(f"ℹ Книга '{self.title}' не требует ремонта (статус: {self._status}).")
 
     # Магические методы
-    def __str__(self) -> str:
-        return f"'{self._title}' by {self._author} ({self._year}) — ${self._price:.2f}"
+    def __str__(self):
+        status_rus = {
+            "available": "в наличии",
+            "checked_out": "выдана",
+            "damaged": "повреждена"
+        }.get(self._status, self._status)
+        return f"'{self._title}' {self._author} ({self._year}) — {self._price:.2f} руб. [{status_rus}]"
 
-    def __repr__(self) -> str:
-        return f"Book(title='{self._title}', author='{self._author}', year={self._year}, price={self._price:.2f})"
+    def __repr__(self):
+        return f"Book('{self._title}', '{self._author}', {self._year}, {self._price})"
 
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other):
         if not isinstance(other, Book):
             return False
         return (self._title == other._title and
@@ -66,19 +94,14 @@ class Book:
                 self._price == other._price)
 
     # Бизнес-методы
-    def apply_discount(self, percent: float) -> None:
-        """
-        Применяет скидку к цене книги.
-        :param percent: процент скидки (0 < percent < 100)
-        """
+    def apply_discount(self, percent):
         if not isinstance(percent, (int, float)) or percent <= 0 or percent >= 100:
             raise ValueError("Скидка должна быть числом от 0 до 100 (не включая границы).")
         self._price -= self._price * (percent / 100)
 
-    def is_modern(self) -> bool:
-        """Возвращает True, если книга издана после 2000 года."""
+    def is_modern(self):
         return self._year > 2000
 
     @classmethod
-    def get_total_books(cls) -> int:
+    def get_total_books(cls):
         return cls.total_books
