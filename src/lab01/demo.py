@@ -1,90 +1,69 @@
 from model import Book
 
 def main():
-    print("=== Демонстрация работы класса Book ===\n")
+    print("=== Демонстрация работы класса Book (оценка 5) ===\n")
 
-    # 1. Создание объектов
-    book1 = Book("1984", "George Orwell", 1949, 15.99)
-    book2 = Book("The Great Gatsby", "F. Scott Fitzgerald", 1925, 12.50)
-    book3 = Book("To Kill a Mockingbird", "Harper Lee", 1960, 14.95)
-
-    # 2. Вывод через print (__str__)
-    print("Созданные книги:")
+    # Сценарий 1: создание книг и отображение статуса
+    print("1. Создаём две книги:")
+    book1 = Book("1984", "Джордж Оруэлл", 1949, 500.0)
+    book2 = Book("Мастер и Маргарита", "Михаил Булгаков", 1967, 650.0)
     print(book1)
     print(book2)
-    print(book3)
     print()
 
-    # 3. Сравнение двух объектов (__eq__)
-    book4 = Book("1984", "George Orwell", 1949, 15.99)
-    print(f"Сравнение book1 и book4 (одинаковые): {book1 == book4}")
-    print(f"Сравнение book1 и book2 (разные): {book1 == book2}")
+    # Сценарий 2: выдача книги (изменение состояния)
+    print("2. Выдаём первую книгу:")
+    book1.check_out()
+    print(book1)
+    print("\nПытаемся выдать её же повторно:")
+    book1.check_out()
     print()
 
-    # 4. Пример некорректного создания (через try/except)
-    print("Попытка создать книгу с некорректными данными:")
+    # Сценарий 3: возврат книги в хорошем состоянии
+    print("3. Возвращаем первую книгу без повреждений:")
+    book1.return_book()
+    print(book1)
+    print()
+
+    # Сценарий 4: выдача, возврат с повреждением и ремонт
+    print("4. Выдаём вторую книгу, возвращаем повреждённой, затем ремонтируем:")
+    book2.check_out()
+    book2.return_book(damaged=True)
+    print(book2)
+    print("\nПытаемся выдать повреждённую книгу:")
+    book2.check_out()
+    print("\nРемонтируем:")
+    book2.repair()
+    print(book2)
+    print()
+
+    # Сценарий 5: проверка валидации (ошибки)
+    print("5. Проверка валидации (ошибки):")
     try:
-        bad_book = Book("", "Unknown", 2000, 10.0)  # Пустое название
+        bad_book = Book("", "Автор", 2000, 100)
     except ValueError as e:
-        print(f"Ошибка: {e}")
-
+        print(f"Ошибка названия: {e}")
     try:
-        bad_book = Book("Title", "Author", 1800, -5.0)  # Отрицательная цена
+        bad_book = Book("Книга", "Автор", 3000, 100)
     except ValueError as e:
-        print(f"Ошибка: {e}")
-
+        print(f"Ошибка года: {e}")
     try:
-        bad_book = Book("Title", "Author", 3000, 10.0)  # Год вне диапазона
+        bad_book = Book("Книга", "Автор", 2000, -10)
     except ValueError as e:
-        print(f"Ошибка: {e}")
+        print(f"Ошибка цены: {e}")
     print()
 
-    # 5. Изменение свойства через setter с валидацией
-    print("Изменение цены и года через setter:")
-    print(f"Исходная цена книги '{book1.title}': ${book1.price:.2f}")
-    book1.price = 18.99
-    print(f"Новая цена: ${book1.price:.2f}")
-    try:
-        book1.price = -5.0  # Попытка установить отрицательную цену
-    except ValueError as e:
-        print(f"Ошибка при установке цены: {e}")
-
-    print(f"Исходный год книги '{book2.title}': {book2.year}")
-    book2.year = 2005
-    print(f"Новый год: {book2.year}")
-    try:
-        book2.year = 1000  # Попытка установить некорректный год
-    except ValueError as e:
-        print(f"Ошибка при установке года: {e}")
+    # Дополнительно: сравнение и бизнес-методы
+    print("6. Сравнение книг и применение скидки:")
+    book3 = Book("1984", "Джордж Оруэлл", 1949, 500.0)
+    print(f"book1 == book3? {book1 == book3}")
+    print(f"Цена book3 до скидки: {book3.price:.2f}")
+    book3.apply_discount(10)
+    print(f"После скидки 10%: {book3.price:.2f}")
+    print(f"Современная ли книга? {book3.is_modern()}")
     print()
 
-    # 6. Бизнес-методы
-    print("Применение скидки:")
-    print(f"Цена книги '{book3.title}': ${book3.price:.2f}")
-    book3.apply_discount(10)  # скидка 10%
-    print(f"Цена после скидки 10%: ${book3.price:.2f}")
-    try:
-        book3.apply_discount(150)  # некорректная скидка
-    except ValueError as e:
-        print(f"Ошибка при применении скидки: {e}")
-    print()
-
-    print("Проверка на современность:")
-    print(f"Книга '{book1.title}' ({book1.year}) современная? {book1.is_modern()}")
-    print(f"Книга '{book2.title}' ({book2.year}) современная? {book2.is_modern()}")
-    print(f"Книга '{book3.title}' ({book3.year}) современная? {book3.is_modern()}")
-    print()
-
-    # 7. Атрибут класса total_books
-    print("Атрибут класса total_books (количество созданных книг):")
-    print(f"Через класс: Book.total_books = {Book.total_books}")
-    print(f"Через экземпляр: book1.total_books = {book1.total_books}")
-    print(f"Через метод класса: Book.get_total_books() = {Book.get_total_books()}")
-    print()
-
-    # 8. Дополнительно: вывод __repr__
-    print("Представление __repr__ для book1:")
-    print(repr(book1))
+    print(f"Всего создано книг: {Book.get_total_books()}")
 
 if __name__ == "__main__":
     main()
