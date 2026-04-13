@@ -10,26 +10,23 @@ class Magazine(Media):
             raise ValueError("Год вне допустимого диапазона.")
         if price <= 0:
             raise ValueError("Цена должна быть положительной.")
-        
         super().__init__(title, year, price)
         self._issue_number = issue_number
         self._month = month.strip()
-    
+
     @property
     def issue_number(self) -> int:
         return self._issue_number
-    
+
     @property
     def month(self) -> str:
         return self._month
-    
+
     def get_info(self) -> str:
-        """Переопределённый метод базового класса."""
-        return (f"Журнал: '{self.title}' | Выпуск №{self.issue_number} "
-                f"({self.month} {self.year}) | Цена: {self.price:.2f} руб.")
-    
+        """Полиморфный метод – своя реализация для журнала."""
+        return f"📰 Журнал: '{self.title}' | Выпуск №{self.issue_number} ({self.month} {self.year}) | {self.price:.2f} руб."
+
     def apply_seasonal_discount(self, discount_percent: float):
-        """Специфический метод журнала."""
         if discount_percent <= 0 or discount_percent >= 100:
             raise ValueError("Некорректная скидка.")
         self.price -= self.price * (discount_percent / 100)
