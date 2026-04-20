@@ -1,3 +1,4 @@
+from interfaces import Printable, Comparable   # <-- добавить эту строку
 from models import Book, Magazine
 from collection import MediaCollection
 
