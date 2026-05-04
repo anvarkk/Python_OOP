@@ -1,50 +1,39 @@
-# Функции сортировки (стратегии)
-def by_title(item):
-    return item.title
+from typing import List, Callable, Any
 
-def by_year(item):
-    return item.year
+class AdvancedCollection:
+    def __init__(self, items=None):
+        self._items = list(items) if items else []
 
-def by_price(item):
-    return item.price
+    def add(self, item):
+        self._items.append(item)
 
-def by_title_then_year(item):
-    return (item.title, item.year)
+    def __len__(self):
+        return len(self._items)
 
-# Функции фильтрации
-def is_book(item):
-    return isinstance(item, Book)
+    def __iter__(self):
+        return iter(self._items)
 
-def is_magazine(item):
-    return isinstance(item, Magazine)
+    def sort_by(self, key_func: Callable[[Any], Any], reverse: bool = False):
+        """Сортирует коллекцию по ключу (стратегия сортировки)."""
+        self._items.sort(key=key_func, reverse=reverse)
+        return self   # для цепочек
 
-def price_less_than(max_price):
-    """Фабрика функций: возвращает функцию-фильтр."""
-    def filter_fn(item):
-        return item.price <= max_price
-    return filter_fn
+    def filter_by(self, predicate: Callable[[Any], bool]):
+        """Фильтрует коллекцию, оставляя только элементы, удовлетворяющие предикату."""
+        self._items = list(filter(predicate, self._items))
+        return self
 
-def year_after(min_year):
-    def filter_fn(item):
-        return item.year >= min_year
-    return filter_fn
+    def apply(self, func: Callable[[Any], Any]):
+        """Применяет функцию ко всем элементам коллекции (стратегия обработки)."""
+        self._items = [func(item) for item in self._items]
+        return self
 
-# Функции преобразования (для map)
-def apply_discount(percent):
-    """Возвращает функцию, уменьшающую цену объекта на percent%."""
-    def discount_fn(item):
-        item._price = item.price * (1 - percent / 100)
-        return item
-    return discount_fn
+    def map(self, func: Callable[[Any], Any]):
+        """Применяет функцию и возвращает новую коллекцию из результатов."""
+        return AdvancedCollection([func(item) for item in self._items])
 
-def to_string(item):
-    return str(item)
+    def to_list(self):
+        return self._items.copy()
 
-# Callable-объект для паттерна Стратегия
-class PriceIncrease:
-    """Стратегия: увеличивает цену на заданный процент."""
-    def __init__(self, percent):
-        self.percent = percent
-    def __call__(self, item):
-        item._price = item.price * (1 + self.percent / 100)
-        return item
+    def __str__(self):
+        return '\n'.join(str(item) for item in self._items)
