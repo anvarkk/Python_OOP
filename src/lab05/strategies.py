@@ -1,3 +1,5 @@
+from models import Book, Magazine 
+
 # Функции сортировки (стратегии)
 def by_title(item):
     return item.title
