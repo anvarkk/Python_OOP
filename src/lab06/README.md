@@ -17,6 +17,10 @@
 ### Сценарий 2.3.4 – методы `find`, `filter`, `map`
 ![Сценарий 2](../../images/lab06/scenario2.png)
 
+![Сценарий 2](../../images/lab06/scenario2.png)
+
+![Сценарий 2](../../images/lab06/scenario2.png)
+
 ### Сценарий 5 – работа с протоколом `Displayable`
 ![Сценарий 5](../../images/lab06/scenario5.png)
 
