@@ -45,7 +45,7 @@ class Book:
                 self.price == other.price)
 
     def __str__(self) -> str:
-        return f"'{self.title}' by {self.author} ({self.year}) — ${self.price:.2f}"
+        return f"'{self.title}' by {self.author} ({self.year}) — {self.price:.2f} руб. "
 
     def __repr__(self) -> str:
         return f"Book(title='{self.title}', author='{self.author}', year={self.year}, price={self.price})"
